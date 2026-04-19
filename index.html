@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 7 Grammar Mastery - New HOTS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: #6366f1;
+        }
+        .correct {
+            background-color: #f0fdf4 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+        .wrong {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        .progress-bar-fill {
+            transition: width 0.5s ease-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 flex items-center justify-center">
+
+    <div id="app" class="w-full max-w-2xl">
+        <!-- Home Screen -->
+        <div id="home-screen" class="glass-morphism rounded-[2rem] p-10 shadow-xl text-center border-b-8 border-indigo-500">
+            <div class="w-20 h-20 bg-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+            </div>
+            <h1 class="text-4xl font-bold text-slate-800 mb-2">Grammar Mastery</h1>
+            <p class="text-indigo-500 font-semibold mb-6 tracking-widest uppercase text-sm">Nouns & Adjectives • Pro Edition</p>
+            
+            <div class="text-left bg-slate-50 p-6 rounded-2xl mb-8 space-y-3">
+                <p class="text-slate-600 flex items-center gap-2"><span class="w-2 h-2 bg-indigo-400 rounded-full"></span> 30 Advanced Challenges</p>
+                <p class="text-slate-600 flex items-center gap-2"><span class="w-2 h-2 bg-indigo-400 rounded-full"></span> Hints Removed for Maximum Difficulty</p>
+                <p class="text-slate-600 flex items-center gap-2"><span class="w-2 h-2 bg-indigo-400 rounded-full"></span> Complex Syntax & Logic Focus</p>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-lg transition-all active:scale-95 text-xl">
+                Enter Challenge
+            </button>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-screen" class="hidden glass-morphism rounded-[2rem] p-8 shadow-xl">
+            <div class="flex items-center justify-between mb-8">
+                <span id="q-number" class="text-indigo-600 font-bold bg-indigo-50 px-4 py-2 rounded-xl text-sm">Question 1/30</span>
+                <div class="flex-1 mx-6 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div id="bar" class="progress-bar-fill h-full bg-indigo-500 w-0"></div>
+                </div>
+                <span id="live-score" class="text-slate-400 font-bold text-sm">Score: 0</span>
+            </div>
+
+            <h2 id="question" class="text-2xl font-bold text-slate-800 mb-8 leading-tight"></h2>
+
+            <div id="options" class="space-y-4"></div>
+
+            <div id="feedback" class="hidden mt-8 p-6 rounded-2xl border-l-4">
+                <h4 id="status-text" class="font-bold text-sm uppercase mb-1">Correct!</h4>
+                <p id="reason" class="text-slate-700 leading-relaxed"></p>
+            </div>
+
+            <button id="next-btn" onclick="nextQuestion()" class="hidden mt-8 w-full bg-slate-900 hover:bg-black text-white font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition-all">
+                Proceed <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+            </button>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden glass-morphism rounded-[2rem] p-12 text-center shadow-xl">
+            <div id="medal" class="text-7xl mb-6">🏅</div>
+            <h2 class="text-3xl font-bold text-slate-800">Final Assessment</h2>
+            <div class="text-6xl font-black text-indigo-600 my-8" id="final-score">0/30</div>
+            <p id="grade-comment" class="text-slate-500 text-lg mb-10"></p>
+            <button onclick="location.reload()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-lg">
+                Restart Challenge
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "In the phrase 'the dancing leaves', how does the word 'dancing' function grammatically?",
+                a: ["As a main verb", "As an abstract noun", "As a participial adjective", "As a gerund noun"],
+                c: "As a participial adjective",
+                e: "The word 'dancing' is a present participle modifying the noun 'leaves', thus acting as an adjective."
+            },
+            {
+                q: "Which word functions as a collective noun in this sentence: 'The fleet sailed toward the horizon at dawn.'",
+                a: ["Horizon", "Dawn", "Fleet", "Sailed"],
+                c: "Fleet",
+                e: "'Fleet' refers to a group of ships, making it a collective noun."
+            },
+            {
+                q: "Identify the sentence where 'fast' is used as an adjective.",
+                a: ["He can run very fast.", "The fast car zoomed away.", "The fast lasted for two days.", "He will fast until sunset."],
+                c: "The fast car zoomed away.",
+                e: "In this sentence, 'fast' modifies the noun 'car'. In the other options, it is an adverb, a noun, or a verb."
+            },
+            {
+                q: "Which category of noun is 'courage'?",
+                a: ["Common Noun", "Proper Noun", "Abstract Noun", "Concrete Noun"],
+                c: "Abstract Noun",
+                e: "Courage is a quality or state of mind that cannot be physically touched or seen."
+            },
+            {
+                q: "In the sentence 'The committee has made its decision', what is the nature of the noun 'committee'?",
+                a: ["A plural common noun", "A collective noun acting as a single unit", "A proper noun", "A material noun"],
+                c: "A collective noun acting as a single unit",
+                e: "The singular verb 'has' and pronoun 'its' show the group is acting together as one entity."
+            },
+            {
+                q: "What is the function of 'golden' in the phrase 'a golden opportunity'?",
+                a: ["Noun of material", "Adjective of quality", "Adjective of quantity", "Possessive adjective"],
+                c: "Adjective of quality",
+                e: "It describes a characteristic or nature of the opportunity, not the actual material it is made of."
+            },
+            {
+                q: "Which of these is the correct order of adjectives to describe a table?",
+                a: ["Round large wooden", "Wooden round large", "Large round wooden", "Large wooden round"],
+                c: "Large round wooden",
+                e: "The order follows: Size (Large) -> Shape (Round) -> Material (Wooden)."
+            },
+            {
+                q: "Identify the proper noun in: 'Many tourists visit the Taj Mahal every winter.'",
+                a: ["Tourists", "Winter", "Many", "Taj Mahal"],
+                c: "Taj Mahal",
+                e: "Taj Mahal is the specific name of a monument, hence it is a proper noun."
+            },
+            {
+                q: "In 'This house is mine', what part of speech is 'This'?",
+                a: ["Demonstrative Adjective", "Demonstrative Pronoun", "Common Noun", "Possessive Adjective"],
+                c: "Demonstrative Adjective",
+                e: "'This' modifies the noun 'house'. If it were 'This is my house', it would be a pronoun."
+            },
+            {
+                q: "Which word is an uncountable noun?",
+                a: ["Information", "Suggestion", "Idea", "Fact"],
+                c: "Information",
+                e: "You can have many 'suggestions' or 'facts', but 'information' is singular and uncountable in English."
+            },
+            {
+                q: "Identify the distributive adjective in: 'Each student received a prize.'",
+                a: ["Student", "Received", "Each", "Prize"],
+                c: "Each",
+                e: "Distributive adjectives like 'each', 'every', 'either' refer to individual members of a group."
+            },
+            {
+                q: "In the sentence 'Iron is a useful metal', what type of noun is 'Iron'?",
+                a: ["Common Noun", "Proper Noun", "Material Noun", "Abstract Noun"],
+                c: "Material Noun",
+                e: "Iron is a raw substance used to make other things, identifying it as a material noun."
+            },
+            {
+                q: "Which of these is a compound adjective?",
+                a: ["Very beautiful", "Old-fashioned", "Extremely cold", "Deeply religious"],
+                c: "Old-fashioned",
+                e: "Compound adjectives are made of two or more words (often hyphenated) acting as a single adjective."
+            },
+            {
+                q: "Which noun is the plural form of 'Index' (in a mathematical context)?",
+                a: ["Indexes", "Indices", "Indexus", "Indications"],
+                c: "Indices",
+                e: "While 'indexes' is used for books, 'indices' is the standard plural in math and science."
+            },
+            {
+                q: "Find the adjective of quantity: 'He showed much patience during the trial.'",
+                a: ["Patience", "Trial", "Showed", "Much"],
+                c: "Much",
+                e: "'Much' indicates the amount of the uncountable noun 'patience'."
+            },
+            {
+                q: "Identify the gender of the word 'Sovereign'.",
+                a: ["Masculine", "Feminine", "Common", "Neuter"],
+                c: "Common",
+                e: "A sovereign (ruler) can be either male or female."
+            },
+            {
+                q: "Which sentence uses 'Stone' as an adjective?",
+                a: ["The boy threw a stone.", "He lived in a stone house.", "This is a heavy stone.", "He has a heart of stone."],
+                c: "He lived in a stone house.",
+                e: "In 'stone house', the word 'stone' describes the material of the house, acting as an adjective."
+            },
+            {
+                q: "In 'Whose bag is this?', what is the word 'Whose'?",
+                a: ["Interrogative Pronoun", "Interrogative Adjective", "Possessive Pronoun", "Relative Adjective"],
+                c: "Interrogative Adjective",
+                e: "'Whose' is used to ask a question and directly modifies the noun 'bag'."
+            },
+            {
+                q: "What is the abstract noun form of the verb 'Expect'?",
+                a: ["Expected", "Expecting", "Expectancy", "Expectant"],
+                c: "Expectancy",
+                e: "Expectancy (or Expectation) is the abstract concept derived from the action of expecting."
+            },
+            {
+                q: "Which of these words is a concrete noun?",
+                a: ["Friendship", "Happiness", "Keyboard", "Success"],
+                c: "Keyboard",
+                e: "A keyboard can be physically touched and seen, unlike the other abstract concepts."
+            },
+            {
+                q: "Identify the proper noun in this set: 'Galaxy, Star, Jupiter, Planet.'",
+                a: ["Galaxy", "Star", "Jupiter", "Planet"],
+                c: "Jupiter",
+                e: "Jupiter is the specific name of a planet, whereas the others are common categories."
+            },
+            {
+                q: "In the phrase 'the injured athlete', what is 'injured'?",
+                a: ["A past participle used as an adjective", "A main verb", "A gerund", "An abstract noun"],
+                c: "A past participle used as an adjective",
+                e: "It is the third form of the verb (V3) used to describe the state of the athlete."
+            },
+            {
+                q: "Which adjective degree is used in 'She is the most talented singer in the group'?",
+                a: ["Positive", "Comparative", "Superlative", "Absolute"],
+                c: "Superlative",
+                e: "'Most talented' is the superlative degree used for comparing more than two entities."
+            },
+            {
+                q: "Which of these is a collective noun for 'directors'?",
+                a: ["Pack", "Board", "Flight", "Gang"],
+                c: "Board",
+                e: "A group of directors is referred to as a 'Board'."
+            },
+            {
+                q: "Identify the emphatic/intensifying adjective in: 'This is the very book I wanted.'",
+                a: ["This", "Book", "Wanted", "Very"],
+                c: "Very",
+                e: "In this context, 'very' is used as an adjective to emphasize the identity of the noun 'book'."
+            },
+            {
+                q: "Which noun is always used as a singular, despite its appearance?",
+                a: ["Scissors", "Mathematics", "Trousers", "Spectacles"],
+                c: "Mathematics",
+                e: "Subject names like Mathematics or Physics look plural but are grammatically singular."
+            },
+            {
+                q: "Find the possessive adjective: 'The dog wagged its tail.'",
+                a: ["Dog", "Wagged", "Its", "Tail"],
+                c: "Its",
+                e: "'Its' indicates possession and modifies the noun 'tail'."
+            },
+            {
+                q: "What type of adjective is 'Third' in 'He won the third prize'?",
+                a: ["Adjective of Quality", "Ordinal Numeral Adjective", "Cardinal Numeral Adjective", "Indefinite Adjective"],
+                c: "Ordinal Numeral Adjective",
+                e: "Ordinal adjectives (first, second, third) indicate the order of things in a series."
+            },
+            {
+                q: "Identify the material noun: 'The window is made of glass.'",
+                a: ["Window", "Made", "Glass", "Of"],
+                c: "Glass",
+                e: "Glass is the substance used to create the window."
+            },
+            {
+                q: "Which word is the abstract noun for 'Hero'?",
+                a: ["Heroic", "Heroism", "Heroine", "Heroes"],
+                c: "Heroism",
+                e: "Heroism is the quality or concept associated with being a hero."
+            }
+        ];
+
+        let state = {
+            index: 0,
+            score: 0,
+            answered: false,
+            shuffled: []
+        };
+
+        function shuffle(arr) {
+            return arr.sort(() => Math.random() - 0.5);
+        }
+
+        function startQuiz() {
+            state.shuffled = shuffle([...quizData]);
+            state.index = 0;
+            state.score = 0;
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            state.answered = false;
+            const data = state.shuffled[state.index];
+            document.getElementById('q-number').innerText = `Challenge ${state.index + 1}/30`;
+            document.getElementById('bar').style.width = `${((state.index + 1) / 30) * 100}%`;
+            document.getElementById('question').innerText = data.q;
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            // Randomize option order
+            const options = shuffle([...data.a]);
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "option-card w-full text-left p-5 rounded-2xl border-2 border-slate-200 bg-white font-semibold text-slate-700 flex items-center justify-between";
+                btn.innerHTML = `<span>${opt}</span><div class="w-6 h-6 rounded-full border-2 border-slate-200 flex-shrink-0"></div>`;
+                
+                btn.onclick = () => {
+                    if(state.answered) return;
+                    handleAnswer(btn, opt, data);
+                };
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(btn, selected, data) {
+            state.answered = true;
+            const isCorrect = selected === data.c;
+            const feedback = document.getElementById('feedback');
+            
+            if(isCorrect) {
+                btn.classList.add('correct');
+                btn.querySelector('div').innerHTML = '✓';
+                btn.querySelector('div').className = "w-6 h-6 rounded-full bg-green-500 text-white flex items-center justify-center text-xs";
+                state.score++;
+                document.getElementById('status-text').innerText = "Correct Logic!";
+                feedback.className = "mt-8 p-6 rounded-2xl border-l-4 bg-green-50 border-green-200 text-green-800";
+            } else {
+                btn.classList.add('wrong');
+                btn.querySelector('div').innerHTML = '✕';
+                btn.querySelector('div').className = "w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs";
+                
+                // Show the right answer
+                Array.from(document.getElementById('options').children).forEach(b => {
+                    if(b.innerText.includes(data.c)) b.classList.add('correct');
+                });
+                document.getElementById('status-text').innerText = "Incorrect Choice";
+                feedback.className = "mt-8 p-6 rounded-2xl border-l-4 bg-red-50 border-red-200 text-red-800";
+            }
+
+            document.getElementById('live-score').innerText = `Score: ${state.score}`;
+            document.getElementById('reason').innerText = data.e;
+            feedback.classList.remove('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            state.index++;
+            if(state.index < 30) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            document.getElementById('final-score').innerText = `${state.score}/30`;
+            
+            const per = (state.score / 30) * 100;
+            const comment = document.getElementById('grade-comment');
+            const medal = document.getElementById('medal');
+
+            if(per >= 90) {
+                medal.innerText = "🏆";
+                comment.innerText = "Master Level! You have an expert understanding of grammar mechanics.";
+            } else if(per >= 70) {
+                medal.innerText = "🥈";
+                comment.innerText = "Strong Performance! You handled the high-difficulty questions well.";
+            } else if(per >= 40) {
+                medal.innerText = "🥉";
+                comment.innerText = "Decent effort. Review the logical explanations for deeper understanding.";
+            } else {
+                medal.innerText = "📖";
+                comment.innerText = "Keep practicing. Grammar is all about logic and patterns!";
+            }
+        }
+    </script>
+</body>
+</html>
